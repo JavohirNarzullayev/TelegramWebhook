@@ -39,14 +39,14 @@ public class InlineKeyboardMaker {
 
         if (!rowList.isEmpty()) {
             rowList.add(getButton(
-                    "Все классы",
+                    "Все элементы",
                     prefix + CallbackDataPartsEnum.ALL_GRADES.name()
             ));
         }
 
         if (isUserDictionaryNeed) {
             rowList.add(getButton(
-                    "Ваш словарь",
+                    "Ваш элементы",
                     prefix + CallbackDataPartsEnum.USER_DICTIONARY.name()
             ));
         }
