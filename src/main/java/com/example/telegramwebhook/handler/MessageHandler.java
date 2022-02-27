@@ -12,6 +12,7 @@ import com.example.telegramwebhook.service.WebhookService;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Document;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 
@@ -26,10 +27,8 @@ public record MessageHandler(WebhookService webhookService,
 
     public void answerMessage(Message message) throws TelegramApiRequestException {
         String chatId = message.getChatId().toString();
-        var file = webhookService.getFile("BQACAgIAAxkBAAIEXWIUpHHgNq3rcpyzsRZEU5c4sxQiAAJOEAACo66pSG_zj18eg0E5IwQ");
-        webhookService.sendDocument(chatId,file.getResult().getFile_id(),"Result",ParseMode.HTML);
         if (message.hasDocument()) {
-            addUserDictionary(chatId, message.getDocument().getFileId());
+            addUserDictionary(chatId,message.getDocument());
         }
         if (message.hasContact()) {
             System.out.println(message.getContact().toString());
@@ -39,6 +38,8 @@ public record MessageHandler(WebhookService webhookService,
             System.out.println(message.getLocation().toString());
             return;
         }
+        var file = webhookService.getFile("BQACAgIAAxkBAAIGcmIXd4vTxyAQrd4TmH8pLPbGj5XqAAIjFwACTIa5SHZaBSVqYB6tIwQ");
+        webhookService.sendDocument(chatId,file.getResult().getFile_id(),"2-ВАРИАНТ.doc",ParseMode.HTML);
 
         switch (findByText(message.getText())) {
             case START -> getStartMessage(chatId);
@@ -95,11 +96,11 @@ public record MessageHandler(WebhookService webhookService,
         webhookService.sendMessageToUser(sendMessage);
     }
 
-    private void addUserDictionary(String chatId, String fileId) {
+    private void addUserDictionary(String chatId, Document document) {
         try {
             //logic and trow
+            if (document.getFileSize()>=20_000_000) throw new TooBigMessageException();
             webhookService.sendMessageToUser(new SendMessage(chatId, BotMessageEnum.SUCCESS_UPLOAD_MESSAGE.getMessage()));
-            return;
         } catch (TelegramFileNotFoundException e) {
             webhookService.sendMessageToUser(new SendMessage(chatId, BotMessageEnum.EXCEPTION_TELEGRAM_API_MESSAGE.getMessage()));
         } catch (TooBigMessageException e) {

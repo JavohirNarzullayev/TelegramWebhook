@@ -11,6 +11,7 @@ public enum BotMessageEnum {
             ❗ *Bu bot orqali nimalar qilish mumkin:*
             ✅ Murojaatlarni yuborish mumkin (Audio,Video,Text)
             ✅ Maksimal 1000 ta so'zgacha qabul qiladi \uD83D\uDC47
+            ✅ Maksimal 20MB gacha fayl \uD83D\uDC47
             @JavohirSSPBot
             ##Maroq bilan ishlating!
             
@@ -25,8 +26,7 @@ public enum BotMessageEnum {
     //результаты загрузки
     SUCCESS_UPLOAD_MESSAGE("\uD83D\uDC4D Файл успешно загружен"),
     EXCEPTION_TELEGRAM_API_MESSAGE("Ошибка при попытку получить файл из API Telegram"),
-    EXCEPTION_TOO_LARGE_MESSAGE("В словаре больше 1 000 слов. Едва ли такой большой набор словарных " +
-            "слов действительно нужен, ведь я работаю для обучения детей"),
+    EXCEPTION_TOO_LARGE_MESSAGE("Максимальный размер 20 Мб"),
     EXCEPTION_BAD_FILE_MESSAGE("Файл не может быть обработан. Вы шлёте мне что-то не то, балуетесь, наверное"),
 
     //ошибки при обработке callback-ов
