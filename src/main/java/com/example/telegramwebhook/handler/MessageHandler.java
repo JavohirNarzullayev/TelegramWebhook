@@ -2,8 +2,7 @@ package com.example.telegramwebhook.handler;
 
 import com.example.telegramwebhook.constant.TelegramConstant;
 import com.example.telegramwebhook.dto.SendPhotoOwn;
-import com.example.telegramwebhook.exceptions.TooBigMessageException;
-import com.example.telegramwebhook.exceptions.TelegramFileNotFoundException;
+import com.example.telegramwebhook.exceptions.TelegramException;
 import com.example.telegramwebhook.keyboard.BotMessageEnum;
 import com.example.telegramwebhook.keyboard.CallbackDataPartsEnum;
 import com.example.telegramwebhook.keyboard.maker.InlineKeyboardMaker;
@@ -25,7 +24,7 @@ public record MessageHandler(WebhookService webhookService,
                              TelegramConstant telegramConstant) {
 
 
-    public void answerMessage(Message message) throws TelegramApiRequestException {
+    public void answerMessage(Message message) throws Exception {
         String chatId = message.getChatId().toString();
         if (message.hasDocument()) {
             addUserDictionary(chatId,message.getDocument());
@@ -56,10 +55,7 @@ public record MessageHandler(WebhookService webhookService,
                 SendMessage helpMessage = new SendMessage(chatId, BotMessageEnum.HELP_MESSAGE.getMessage());
                 webhookService.sendMessageToUser(helpMessage);
             }
-            case null -> throw new IllegalArgumentException();
-            default -> {
-                webhookService.sendMessageToUser(new SendMessage(chatId, BotMessageEnum.NON_COMMAND_MESSAGE.getMessage()));
-            }
+            default -> throw new TelegramException.CommandEmptyException(chatId);
         }
     }
 
@@ -69,7 +65,7 @@ public record MessageHandler(WebhookService webhookService,
                 .caption("Asosiy mavzu")
                 .photo("https://instagram.ftas1-1.fna.fbcdn.net/v/t51.2885-15/sh0.08/e35/s640x640/243971681_323123446238142_4302249588099074604_n.webp.jpg?_nc_ht=instagram.ftas1-1.fna.fbcdn.net&_nc_cat=106&_nc_ohc=np81M2t1oAMAX9hrI-4&edm=ABfd0MgBAAAA&ccb=7-4&oh=00_AT9KsEVUX77EGKHuhifZ2TDM0ITojVzsSdT8VYDciRNYYg&oe=621B2749&_nc_sid=7bff83").build();
         if (!webhookService.sendPhotoToUser(sendPhotoOwn).isOk())
-            throw new TelegramApiRequestException("Webhook not working!!");
+            throw new TelegramException.DefaultException(chatId,"Webhook not working!!");
 
         var sendMessage = new SendMessage(chatId, BotMessageEnum.HELP_MESSAGE.getMessage());
         sendMessage.enableMarkdown(false);
@@ -96,17 +92,17 @@ public record MessageHandler(WebhookService webhookService,
         webhookService.sendMessageToUser(sendMessage);
     }
 
-    private void addUserDictionary(String chatId, Document document) {
-        try {
-            //logic and trow
-            if (document.getFileSize()>=20_000_000) throw new TooBigMessageException();
-            webhookService.sendMessageToUser(new SendMessage(chatId, BotMessageEnum.SUCCESS_UPLOAD_MESSAGE.getMessage()));
-        } catch (TelegramFileNotFoundException e) {
-            webhookService.sendMessageToUser(new SendMessage(chatId, BotMessageEnum.EXCEPTION_TELEGRAM_API_MESSAGE.getMessage()));
-        } catch (TooBigMessageException e) {
-            webhookService.sendMessageToUser(new SendMessage(chatId, BotMessageEnum.EXCEPTION_TOO_LARGE_MESSAGE.getMessage()));
-        } catch (Exception e) {
-            webhookService.sendMessageToUser(new SendMessage(chatId, BotMessageEnum.EXCEPTION_BAD_FILE_MESSAGE.getMessage()));
+    private void addUserDictionary(String chatId, Document document) throws Exception {
+        //logic and trow
+        if (document.getFileSize() >= 20_000_000) throw new TelegramException.TooBigMessageException(chatId);
+        var result = webhookService.sendMessageToUser(new SendMessage(chatId, BotMessageEnum.SUCCESS_UPLOAD_MESSAGE.getMessage()));
+        if (!result.isOk()) {
+            switch (result.getError_code()) {
+                case 404 -> throw new TelegramException.TelegramFileNotFoundException(chatId);
+                case 505 -> throw new TelegramException.InternalErrorException(chatId);
+                default -> throw new TelegramException.DefaultException(chatId, result.getDescription());
+            }
+
         }
     }
 }

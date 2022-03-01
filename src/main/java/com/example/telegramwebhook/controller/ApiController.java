@@ -2,6 +2,7 @@ package com.example.telegramwebhook.controller;
 
 import com.example.telegramwebhook.service.TgService;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +16,7 @@ public class ApiController {
     private final TgService tgService;
 
     @PostMapping
+    @SneakyThrows
     public void getUpdate(@RequestBody Update update){
         tgService.onWebhookUpdateReceived(update);
     }

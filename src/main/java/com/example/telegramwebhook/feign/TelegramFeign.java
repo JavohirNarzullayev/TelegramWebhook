@@ -1,13 +1,11 @@
 package com.example.telegramwebhook.feign;
 
+import com.example.telegramwebhook.constant.TgAction;
 import com.example.telegramwebhook.dto.FileTelegram;
 import com.example.telegramwebhook.dto.ResultTelegram;
 import com.example.telegramwebhook.dto.SendPhotoOwn;
-import com.example.telegramwebhook.constant.TgAction;
 import feign.Headers;
-import feign.RequestLine;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;

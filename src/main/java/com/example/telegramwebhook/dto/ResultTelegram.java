@@ -11,5 +11,8 @@ import lombok.ToString;
 @NoArgsConstructor
 public class ResultTelegram<T> {
     private boolean ok;
+    private Integer error_code;
+    private String description;
+
     private T result;
 }

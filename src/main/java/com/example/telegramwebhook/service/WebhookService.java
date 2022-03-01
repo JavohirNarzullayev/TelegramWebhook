@@ -1,10 +1,12 @@
 package com.example.telegramwebhook.service;
 
+import com.example.telegramwebhook.constant.TelegramConstant;
 import com.example.telegramwebhook.dto.FileTelegram;
 import com.example.telegramwebhook.dto.ResultTelegram;
 import com.example.telegramwebhook.dto.SendPhotoOwn;
-import com.example.telegramwebhook.constant.TelegramConstant;
+import com.example.telegramwebhook.exceptions.TelegramException;
 import com.example.telegramwebhook.feign.TelegramFeign;
+import feign.FeignException;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -22,7 +24,11 @@ public record WebhookService(TelegramFeign telegramFeign, TelegramConstant teleg
     }
 
     public ResultTelegram<Message> sendMessageToUser(SendMessage sendMessage) {
-        return telegramFeign.sendMessageToUser(telegramConstant.getPath(), sendMessage);
+        try {
+            return telegramFeign.sendMessageToUser(telegramConstant.getPath(), sendMessage);
+        } catch (FeignException e) {
+            throw new TelegramException.DefaultException(sendMessage.getChatId(), e.getMessage());
+        }
     }
 
     public ResultTelegram<FileTelegram> getFile(String file_id) {
