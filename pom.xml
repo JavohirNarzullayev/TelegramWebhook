@@ -14,10 +14,12 @@
     <name>TelegramWebhook</name>
     <description>TelegramWebhook</description>
     <properties>
-        <maven.compiler.source>1.7</maven.compiler.source>
-        <maven.compiler.target>1.7</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <java.version>17</java.version>
         <spring-cloud.version>2020.0.3</spring-cloud.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <mainClass>com.example.telegramwebhook.TelegramWebhookApplication</mainClass>
     </properties>
     <dependencies>
         <dependency>
