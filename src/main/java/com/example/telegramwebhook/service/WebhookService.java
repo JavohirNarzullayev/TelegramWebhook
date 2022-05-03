@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
+import java.io.IOException;
+
 @Service
 public record WebhookService(TelegramFeign telegramFeign, TelegramConstant telegramConstant) {
 
@@ -31,7 +33,7 @@ public record WebhookService(TelegramFeign telegramFeign, TelegramConstant teleg
         }
     }
 
-    public ResultTelegram<FileTelegram> getFile(String file_id) {
+    public ResultTelegram<FileTelegram> getFile(String file_id) throws IOException {
         return telegramFeign.getFile(telegramConstant.getPath(), file_id);
     }
 

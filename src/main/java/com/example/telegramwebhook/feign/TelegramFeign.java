@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.*;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
-@FeignClient(url = "${telegram.api-url}",name = "TelegramFeign")
+import java.io.IOException;
+
+@FeignClient(url = "${telegram.api-url}",name = "TelegramFeign", configuration = FeignConfiguration.class)
 public interface TelegramFeign {
 
     @PostMapping("{path}"+ TgAction.SEND_MESSAGE)
@@ -45,5 +47,5 @@ public interface TelegramFeign {
     @RequestMapping(value = "{path}"+ TgAction.GET_FILE,method = RequestMethod.GET)
     ResultTelegram<FileTelegram> getFile(
             @PathVariable("path") String path,
-            @RequestParam("file_id") String file_id);
+            @RequestParam("file_id") String file_id) throws IOException;
 }

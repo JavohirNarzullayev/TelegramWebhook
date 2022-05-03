@@ -37,8 +37,10 @@ public record MessageHandler(WebhookService webhookService,
             System.out.println(message.getLocation().toString());
             return;
         }
-        var file = webhookService.getFile("BQACAgIAAxkBAAIGcmIXd4vTxyAQrd4TmH8pLPbGj5XqAAIjFwACTIa5SHZaBSVqYB6tIwQ");
-        webhookService.sendDocument(chatId,file.getResult().getFile_id(),"2-ВАРИАНТ.doc",ParseMode.HTML);
+        try {
+            var file = webhookService.getFile("BQACAgIAAxkBAAIGcmIXd4vTxyAQrd4TmH8pLPbGj5XqAAIjFwACTIa5SHZaBSVqYB6tIwQ");
+            webhookService.sendDocument(chatId,file.getResult().getFile_id(),"2-ВАРИАНТ.doc",ParseMode.HTML);
+        }catch (Exception _ignore){}
 
         switch (findByText(message.getText())) {
             case START -> getStartMessage(chatId);

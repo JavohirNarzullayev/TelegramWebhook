@@ -89,11 +89,9 @@ public class GeneralExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(FeignException.class)
-    public ResponseEntity<?> feignError(TelegramException.DefaultException exception) {
-        sendError(exception.getChatId(), exception.getMessage());
+    public ResponseEntity<?> feignError(FeignException exception) {
         Map<String, String> errors = new HashMap<>();
         errors.put("error", exception.getMessage());
-        errors.put("chat_id", exception.getChatId());
         return new ResponseEntity<>(errors, HttpStatus.BAD_GATEWAY);
     }
 
